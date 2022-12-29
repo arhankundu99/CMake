@@ -1,0 +1,54 @@
+# set minimum cmake version
+cmake_minimum_required(VERSION 3.0.0)
+
+# in function command, print_name is the function name and name is the argument
+function(print_name name)
+    message("1. My name is ${name}")
+endfunction()
+
+# call the function
+print_name(Bob)
+
+# the below function call will result in an error because the argument name is NOT an optional argument
+# print_name()
+
+# we can have the same function defined twice. The below print_name function is same as the function defined above
+function(print_name name)
+    message("2. My name is ${name}")
+endfunction()
+
+# Now if we call print_name function. The second function would be executed.
+print_name(Alice) # 2. My name is Alice
+
+# But we can call the first function by prepending _ to the function
+_print_name(Alice) # 1. My name is Alice
+
+# However, CMake only stores 2 same functions. So if we create another same print_name function, the first function would be lost (Note we cannot prepend 2 underscores to call the first function)
+
+# CMake allows us to have optional arguments also in the function
+# Optional arguments can be accessed using some predefined variables.
+
+# ARGC : Total number of arguments(named arguments + optional arguments)
+
+# ARGV : list of variables containing both named and optional arguments
+
+# ARGN : list of variables containing only optional arguments
+
+# ARGV0 : For accessing the first argument
+
+# ARGV1 : For accessing the second argument and so on...
+
+# eg: print_names takes in 2 cumpolsory arguments name1 and name2
+function(print_names name1 name2)
+    message("The total number of arguments are ${ARGC}")
+    message("The optional arguments are ${ARGN}")
+    message("The first element of optional arguments is ${ARGV2}")
+    
+    foreach(name ${ARGV})
+        message(${name})
+    endforeach()
+endfunction()
+
+print_names(Alice Bob Charlie)
+
+

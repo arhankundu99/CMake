@@ -1,0 +1,45 @@
+MODULE 2
+Requirements to generate a makefile using CMake
+1) CMakeLists.txt
+2) A build folder where all the build files will be generated.
+
+Good practice:
+A CMakeLists.txt and a build folder should exist in the top level of the project. All the build files should be generated in the build folder. 
+Note that CMake generates the build files from where the CMake command was executed.
+
+So inside the build folder: type "cmake .."
+the double .. specifies that the CMakeLists.txt file exists in the parent folder.
+
+When we run the cmake command, build files are generated. Among the build files, there are 2 important files:
+1) Makefile (This is used to build the project)
+2) CMakeCache.txt
+The CMake cache may be thought of as a configuration file. The first time CMake is run on a project, 
+it produces a CMakeCache.txt file in the top directory of the build tree. 
+CMake uses this file to store a set of global cache variables,
+whose values persist across multiple runs within a project build tree.
+
+There are a few purposes of this cache. 
+The first is to store the user’s selections and choices, 
+so that if they should run CMake again they will not need to reenter that information. 
+
+For example, the option command creates a Boolean variable and stores it in the cache.
+option(USE_JPEG "Do you want to use the jpeg library")
+
+The above line would create a variable called USE_JPEG and put it into the cache. 
+That way the user can set that variable from the user interface and 
+its value will remain in case the user should run CMake again in the future.
+
+
+The CMakeLists.txt consists of commands to generate the build files
+
+Note that by using a build system, if we change a source file, the binary of only that changed file is generated. So if nothing is changed, 
+then the binaries would not be generated again.
+
+LIBRARIES
+When we create libraries, those libraries can be used by some other piece of code.
+
+The libraries and the executable are called TARGETS in CMake.
+
+FAQS:
+Can we add more than 1 executable in CMakeLists.txt file?
+Yes, we can add more than 1 executable and the executable names have to be different from one another.

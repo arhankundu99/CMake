@@ -1,0 +1,30 @@
+# set minimum cmake version
+cmake_minimum_required(VERSION 3.0.0)
+
+SET(VAR a)
+
+# while loop
+while(NOT VAR STREQUAL aaaaa)
+    SET(VAR ${VAR}a)
+endwhile()
+
+message(${VAR}) #aaaaa
+
+# foreach loop (This loop is used to iterate over a list of items or a range of numbers). Here Name is the iterator
+# Note that the following command is same as foreach(Name Alice;Bob;Charlie) and foreach(Name "Alice;Bob;Charlie")
+foreach(Name Alice Bob Charlie)
+    message(${Name})
+endforeach()
+
+# foreach loop for a range of numbers
+# foreach(x RANGE 10) # takes in values from 0 to 10
+# foreach(x RANGE 10 20) # takes in values from 10 to 20
+# foreach(X RANGE 10 20 3) # takes in values from 10 to 20 in 3 steps (10, 13, 16 and 19)
+
+# to iterate through multiple lists
+set(VAR1 "3;4")
+set(VAR2 5 6)
+set(VAR3 "7 8")
+foreach(x IN LISTS VAR1 VAR2 VAR3)
+    message("x = ${x}")
+endforeach()

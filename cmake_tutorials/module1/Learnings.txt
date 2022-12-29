@@ -1,0 +1,41 @@
+Module 1
+
+Compilation consists of 4 process:
+1) Preprocessing: This is where the header files are expanded, macros are expanded, comments are removed and conditional preprocessing takes place. 
+                  At the end of preprocessing, a ".i" file is generated. This is done by the PREPROCESSOR
+2) Compiling: This is where the compiler converts the generated .i file to .s file (Assembly language code).
+3) Assembling: Then the assembler takes the assembly code and generates binaries ".o" file which consists of machine code
+4) Linking: This is the last step where the Linker searches for the function definitions of the function declarations and links with the other cpp files.
+
+So For every cpp file here, a binary file ".o" is generated. (Note that .o files are called raw binaries and .bin/.exe files are called binaries)
+
+Need for build systems:
+1) If we have many files, we would have to include all of them in the gcc/g++ command.
+2) Also if we do a small change in one of the files, we would have to compile all the project files which can take a lot of time.
+
+Build system keeps track of the files which are not changed. So the build system does not again generate the binaries of the unchanged files
+and only generates the binaries of the changed files. Also keeping track of the files becomes easier with build system.
+
+Examples of build systems:
+1) make
+2) ninja
+3) ant
+4) gradle
+
+These softwares automate the compilation and linking process
+
+Note that "CMake" is a build system generator. Not a build system. It generates the build and makefile which make uses to build the project.
+Why use CMake? Why not directly write makefiles?
+Because CMake helps to generate build files according to the environment which make can use to build the project.
+For eg., if we have the makefile of a cpp project in windows, we may not be able to build that project in linux
+
+Note that in compilation process, the compiler generates the binaries (the .o files) and links the binaries.
+We can generate the .o file for each cpp file using this command: 
+g++ -c main.cpp
+g++ -c addition.cpp
+g++ -c print_result.cpp
+
+When the commands are executed, main.o, addition.o and print_result.o are generated.
+
+Now we can link the object files using the following command to produce the executable
+g++ main.o addition.o print_result.o -o main

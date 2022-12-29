@@ -1,0 +1,71 @@
+# set cmake minimum version
+cmake_minimum_required(VERSION 3.0.0)
+
+# in a function, a new scope is created which is called the function scope.
+# That means, the variables CREATED OR MODIFIED inside the function scope, are not accessible to the outer scope.
+
+# NOTE (THIS POINT IS VERY IMP. SEE THE BELOW EXAMPLES): BEFORE A FUNCTION SCOPE IS CREATED, CMAKE COPIES ALL VARIABLES DEFINED IN THE OUTER SCOPE TO INITIALISE THE
+# VARIABLES IN THE FUNCTION SCOPE. 
+
+# Consider the following example
+
+# # setting var to a list of strings with one element whose value is Alice
+# SET(VAR Alice)
+
+# function(print_var)
+      # Note that in the function scope, CMake first copies all the variables defined in the outer scope to the function scope.
+      # That means here, another variable VAR is created in the function scope, with the same value as Alice
+
+#     message("The value of VAR at start of function call: ${VAR}") # The value of VAR at start of function call: Alice
+
+#     # now set the VAR to another variable. Note that the VAR in the Parent scope DOES NOT Change. Here we are setting the copied VAR which was created by CMake in the function scope
+      # That is why the Value of VAR in the parent scope does NOT change.
+#     SET(VAR Bob)
+
+#     # print the VAR defined in the function scope.
+#     message("The value of VAR at end of function call: ${VAR}") # The value of VAR at end of function call: Bob
+# endfunction()
+
+# # display the VAR before function call
+# message("The value of VAR before function call: ${VAR}") # The value of VAR before function call: Alice
+
+# # call the function
+# print_var()
+
+# # display the VAR after function call. VAR is still Alice because the VAR which was modified in the function call was Another variable created in the function scope.
+# message("The value of VAR after function call: ${VAR}") # The value of VAR after function call: Alice.
+
+
+# To change the VAR variable which is in the Outer scope, use PARENT_SCOPE keyword
+# setting var to a list of strings with one element whose value is Alice
+SET(VAR Alice)
+
+function(print_var)
+    message("The value of VAR at start of function call: ${VAR}") # The value of VAR at start of function call: Alice
+
+    # now set the VAR to another variable with keyword PARENT_SCOPE. This modifies the VAR which is defined in the outer scope.
+    SET(VAR Bob PARENT_SCOPE)
+
+    # print the VAR. Here VAR is still Alice And NOT Bob. See the Note above.
+    message("The value of VAR at end of function call: ${VAR}") # The value of VAR at end of function call: Alice
+endfunction()
+
+# display the VAR before function call
+message("The value of VAR before function call: ${VAR}") # The value of VAR before function call: Alice
+
+# call the function
+print_var()
+
+# display the VAR after function call. VAR is now Bob because the value of VAR was changed in the function using PARENT_SCOPE Keyword.
+message("The value of VAR after function call: ${VAR}") # The value of VAR after function call: Bob.
+
+
+# In CMake, functions do not return a value. If we want a function to return a value, we can use the PARENT_SCOPE Keyword
+
+# And note that the functions in CMake are pass by value. That means if we pass a list to a function, and do some operations in the list,
+# Then those changes are LOCAL to the function and WILL NOT BE reflected outside.
+
+# The add_subdirectory(dir1, dir2, ....) also introduces a new scope called directory scope which is similar to the parent scope.
+
+# NOTE THAT function and add_subdirectory commands are the only commands which introduces a new scope.
+# MACRO And include commands are similar to function and add_sudirectory commands which DOES NOT introduce a new scope.

@@ -1,0 +1,46 @@
+# set cmake minimum version
+cmake_minimum_required(VERSION 3.0.0)
+
+# macros in cmake look exactly like functions
+# macro(macro_name arg1 arg2)
+#     <commands>
+# endmacro()
+
+# THEN WHAT IS THE DIFFERENCE BETWEEN MACRO AND A FUNCTION?
+# Macros do not introduce a scope like the function does. The commands written in the macro are executed in the parent scope.
+# So we do not need to use PARENT_SCOPE Keyword to change the value of a variable in the PARENT SCOPE. 
+
+# Also in macro, the input arguments are NOT Variables (The DEFINED Check will fail. See the below example)
+# The macro call command will be replaced with the macro body and at all the places, the dereferenced value of var is replaced with Charlie. (See the below example)
+
+# The arguments of the macro are only there for the string replacement. They are NOT Variables.
+
+# Consider the below example with function and macro.
+
+# function example
+message("FUNCTION EXAMPLE")
+function(print_detail var)
+    message("The value of var at the start of function: ${var}") # The value of var at the end of function: Charlie
+    if(DEFINED var)
+        message("var is defined in the function scope") # this will be executed
+    endif()
+    set(var abc)
+    message("The value of var at the end of function: ${var}") # The value of var at the end of function: abc
+endfunction()
+
+print_detail(Charlie)
+# message(${var}) # gives an error because var is not defined. (var was defined in function scope of print_detail function)
+
+# macro example
+message("MACRO EXAMPLE")
+macro(print_detail var)
+    message("The value of var at the start of function: ${var}") # The value of var at the end of function: Charlie
+    if(DEFINED var)
+        message("var is defined in the current scope") # this will not be executed because the arguments are NOT variables in macro
+    endif()
+    set(var abc) # Here, we are creating a new variable var in the current scope
+    message("The value of var at the end of function: ${var}") # The value of var at the end of function: Charlie (Not abc)
+endmacro()
+
+print_detail(Charlie)
+message(${var}) # abc. This line does not give an error because variables defined in macro does not introduce a new scope like function does. So var gets defined in the current scope. 

@@ -1,0 +1,101 @@
+# set the minimum cmake version
+cmake_minimum_required(VERSION 3.0.0)
+
+# in cmake, the following values are constant and evaluate to TRUE in if-else condition
+# 1, ON, YES, TRUE, Y, a non-zero number, non-empty string
+
+# the following values evaluate to FALSE in if-else condition
+# 0, OFF, NO, FALSE, N, IGNORE, NOTFOUND, empty string, string ending with -NOTFOUND
+
+if(YES)
+    message("COMMAND YES WAS GIVEN AND IT EVALUATES TO TRUE")
+endif() # ifelse command is terminated by the endif() command
+
+if(NO)
+    message("COMMAND NO WAS GIVEN AND IT EVALUATES TO NO. THIS WILL NOT BE PRINTED")
+endif()
+
+# Now set a variable to NO
+set(VAR NO)
+
+# NOTE: in if else condition, VAR is AUTOMATICALLY DEREFERENCED. So if we write ${VAR} as condition, then ${${VAR}} would be evaluated.
+if(VAR)
+    message("This will NOT be printed because it evaluates to NO")
+endif()
+
+# The below condition is not a constant, so the if command will dereference it ${YE} and as it is not defined till now, it evaulates to empty string
+if(YE)
+    message("This will NOT be printed because the ${YE} is empty string")
+endif()
+
+set(NAME Alice)
+if(NAME)
+    message("This will be printed as ${NAME} is not a constant and not an empty string")
+endif()
+
+set(VAR YES)
+if(VAR)
+    message("VAR is defined. If block executed")
+elseif(YE)
+    message("YE is not defined. elseif block not executed")
+else()
+    message("Else block will not be executed because if block is executed")
+endif()
+
+# Notice the following commands
+set(VAR OFF)
+set(VAR2 VAR)
+
+if(VAR2)
+    message("$VAR2 evaluates VAR which is not an empty string. if block executed")
+endif()
+
+# But if we dereference the VAR2 variable
+if(${VAR2})
+    message("$($(VAR2)) is OFF which evalutes to false. if block not executed")
+else()
+    message("$($(VAR2)) is OFF which evalutes to false. else block executed")
+endif()
+
+# UNARY TESTS
+
+# 1. DEFINED command: checks where a variable is defined or not
+if(DEFINED VAR2)
+    message("VAR2 is defined. if block executed.")
+endif()
+
+# 2. COMMAND command: checks where a command is a valid command or not
+if(COMMAND target_include_library)
+    message("target_include_library is NOT a valid command. if block not executed")
+endif()
+
+# 3. exists command: checks where a given file exists or not in the given path
+if(EXISTS "CMakeLists.txt")
+    message("This given file exists. If block executed")
+endif()
+
+
+# BINARY TESTS
+
+# check whether 2 strings are equal or not
+set(NAME1 Alice)
+set(NAME2 Bob)
+
+if(NAME1 STRLESS NAME2)
+    message("${NAME1} is less than ${NAME2}")
+elseif(NAME1 STREQUAL NAME2)
+    message("${NAME1} is equal to ${NAME2}")
+else()
+    message("${NAME1} is greater than ${NAME2}")
+endif()
+
+
+# NOT command
+if(NOT DEFINED YE)
+    message("YE IS NOT DEFINED")
+endif()
+
+# OR AND AND commands
+if(NOT DEFINED YE OR ((NAME1 STRLESS NAME2) AND (NAME1 STREQUAL ALICE)))
+    message("PRACTICING WITH NESTED COMMANDS. IF BLOCK EXECUTED")
+endif()

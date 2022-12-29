@@ -1,0 +1,63 @@
+MODULE 3
+
+Command: add_subdirectory(path of the directory wrt to the cmake)
+This command is used to execute CMakeLists.txt which is present in the given path
+
+Notice the folder structure for lib
+lib
+   math
+       include
+              addition.h
+       src 
+              addition.cpp
+
+In main.cpp and addition.cpp, to include addition.h, either we have to give the relative path of addition.h wrt these files
+OR We can use the CMake command given below to include just using the header name (No need to give the relative path)
+
+Command: target_include_directories(TARGET_NAME SCOPE DIRECTORY1 DIRECTORY2 ...)
+This command takes in the target name, the scope (private, public or interface) and the rest of the parameters are the directory names.
+All the header files present in the TOP LEVEL (NOTE: Cmake DOES NOT SEARCH FOR THE HEADER FILES IN THE NESTED DIRECTORIES) specified directories can now be included without the relative path
+
+
+SCOPES: (PUBLIC, PRIVATE AND INTERFACE)
+a) For target_include_directories command:
+In CMake, for any target, in the preprocessing stage, 
+it comes with a INCLUDE_DIRECTORIES and a INTERFACE_INCLUDE_DIRECTORIES for searching the header files building. 
+
+target_include_directories will populate all the directories to INCLUDE_DIRECTORIES 
+and/or INTERFACE_INCLUDE_DIRECTORIES depending on the keyword <PRIVATE|PUBLIC|INTERFACE> we specified. 
+The INCLUDE_DIRECTORIES will be used for the current target only 
+and the INTERFACE_INCLUDE_DIRECTORIES will be appended to the INCLUDE_DIRECTORIES of any other target which has dependencies on the current target. With such settings, 
+the configurations of INCLUDE_DIRECTORIES and INTERFACE_INCLUDE_DIRECTORIES for all building targets are easy to compute and scale up even for multiple hierarchical layers of building dependencies and many building targets.
+
+PUBLIC:     All the directories following PUBLIC will be used for the current target and the other targets that have dependencies on the current target, i.e., appending the directories to INCLUDE_DIRECTORIES and INTERFACE_INCLUDE_DIRECTORIES.
+PRIVATE:	All the include directories following PRIVATE will be used for the current target only, i.e., appending the directories to INCLUDE_DIRECTORIES.
+INTERFACE:	All the include directories following INTERFACE will NOT be used for the current target but will be accessible for the other targets that have dependencies on the current target, i.e., appending the directories to INTERFACE_INCLUDE_DIRECTORIES.
+
+For eg., in math_operations library's CMake
+if we write:
+1) target_include_directories(math_operations PUBLIC include), this means that the current target math_operations's source files can directly include the headers without the relative path
+and all the targets which are dependant on math_operations, can also include the headers without the relative path
+2) target_include_directories(math_operations INTERFACE include), this means that the current target cannot simply include the headers, but all the targets which are dependant on math_operations,
+can use the headers.
+3)target_include_directories(math_operations PRIVATE include), this means that only the target can include the headers and all the targets which are dependant on this target cannot include the headers
+without the relative path.
+
+b) For target_link_libraries command:
+PUBLIC:	    All the objects following PUBLIC will be used for linking to the current target and providing the interface to the other targets that have dependencies on the current target.
+PRIVATE:	All the objects following PRIVATE will only be used for linking to the current target.
+INTERFACE	All the objects following INTERFACE will only be used for providing the interface to the other targets that have dependencies on the current target.
+
+For example, if the fruit library has the implementation of functions, such as size and color, 
+and the apple library has a function apple_size which called the size from the fruit library and was PRIVATE linked with the fruit library. 
+We could create an executable eat_apple that calls apple_size by PUBLIC or PRIVATE linking with the apple library. 
+However, if we want to create an executable eat_apple that calls the size and color from the fruit library, 
+only linking with the apple library will cause building error, 
+since the fruit library was not part of the interface in the apple library, and is thus inaccessible to eat_apple. 
+To make the apple library to inherit the size and color from the fruit library, 
+we have to make the linking of the apple library to the the fruit library PUBLIC instead of PRIVATE.
+
+
+In this project, notice in main.cpp, addition.cpp and print_result.cpp,
+we are also mentioning the library names along with the header names as it helps us to find which header file belongs to which library.
+The target_include_directory command searches for ALL the header files in that directory (It also searches in nested folders)
